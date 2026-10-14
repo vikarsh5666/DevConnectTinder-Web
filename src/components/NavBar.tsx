@@ -5,6 +5,7 @@ import { removeUser } from "../utils/userSlice";
 import { BASE_URL } from "../utils/constants";
 import { useNavigate, Link } from "react-router-dom";
 import axios from "axios";
+import { removeFeed } from "../utils/FeedSlice";
 
 export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector;
 
@@ -15,14 +16,15 @@ const NavBar = () => {
 
     const handleLogOut = async () => {
         try {
-          await axios.post(BASE_URL + "/logout", {}, { withCredentials: true });
-          dispatch(removeUser());
-          return navigate("/login");
+            await axios.post(BASE_URL + "/logout", {}, { withCredentials: true });
+            dispatch(removeUser());
+            dispatch(removeFeed());
+            return navigate("/login");
         } catch (err) {
-          // Error logic maybe redirect to error page
-          console.log(err);
+            // Error logic maybe redirect to error page
+            console.log(err);
         }
-      };
+    };
     return (
         <div className="navbar bg-base-300 shadow-sm">
             <div className="flex-1">

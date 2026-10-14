@@ -1,14 +1,15 @@
 import { useDispatch, useSelector } from "react-redux";
+import type { RootState } from "../utils/appstore";
 import { removeUser } from "../utils/userSlice";
 import { BASE_URL } from "../utils/constants";
 import { useNavigate, Link } from "react-router-dom";
 import axios from "axios";
-import { removeUserFromFeed } from "../utils/feedSlice";
+import { clearFeed } from "../utils/feedSlice";
 
 const NavBar = () => {
-    const user = useSelector((store) => store.user);
-    const connectionRequest = useSelector((store) => store.connectionRequest);
-    const connections = useSelector((store) => store.connections);
+    const user = useSelector((store: RootState) => store.user);
+    const connectionRequest = useSelector((store: RootState) => store.connectionRequest);
+    const connections = useSelector((store: RootState) => store.connections);
     const navigate = useNavigate();
     const dispatch = useDispatch();
 
@@ -16,7 +17,7 @@ const NavBar = () => {
         try {
             await axios.post(BASE_URL + "/logout", {}, { withCredentials: true });
             dispatch(removeUser());
-            dispatch(removeUserFromFeed());
+            dispatch(clearFeed());
             return navigate("/login");
         } catch (err) {
             // Error logic maybe redirect to error page

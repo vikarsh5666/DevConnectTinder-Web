@@ -3,13 +3,16 @@ import {BASE_URL} from "../utils/constants";
 import { useDispatch } from "react-redux";
 import {removeUserFromFeed} from "../utils/feedSlice";
 
-const UserCard = (props) => {
+const UserCard = (props: any) => {
     const { _id, firstName, lastName, photoUrl, about, age, gender } = props.user;
     const { isHideActionBtn } = props;
     const dispatch = useDispatch();
 
-    const handleSendRequest = async (status, userId) => {
-        const res = await axios.post(
+    const handleSendRequest = async (
+        status: "interested" | "ignored",
+        userId: string
+    ) => {
+        await axios.post(
             BASE_URL + '/request/send/' + status + '/' + userId,
             {},
             { withCredentials: true }

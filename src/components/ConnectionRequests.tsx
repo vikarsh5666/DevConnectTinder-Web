@@ -1,15 +1,19 @@
 import axios from "axios";
 import { BASE_URL } from "../utils/constants";
 import { useDispatch, useSelector } from "react-redux";
+import type { RootState } from "../utils/appstore";
 import { addRequests, removeRequest } from "../utils/connectionRequestsSlice";
 import { useEffect } from "react";
 
 const ConnectionRequests = () => {
-  const requests = useSelector((store) => store.connectionRequest);
+  const requests = useSelector((store: RootState) => store.connectionRequest);
   const dispatch = useDispatch();
-  const reviewRequest = async (status, _id) => {
+  const reviewRequest = async (
+    status: "accepted" | "rejected",
+    _id: string
+    ) => {
     try {
-      const res = axios.post(
+      axios.post(
         BASE_URL + "/request/review/" + status + "/" + _id,
         {},
         { withCredentials: true }

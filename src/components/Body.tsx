@@ -5,13 +5,14 @@ import Footer from "./Footer";
 import { BASE_URL } from "../utils/constants";
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import type { RootState } from "../utils/appstore";
 import { addUser } from '../utils/userSlice';
 
 
 const Body = () => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
-    const userData = useSelector((store) => store.user);
+    const userData = useSelector((store: RootState) => store.user);
 
     const fetcUser = async () => {
         if (userData) return;
@@ -24,12 +25,13 @@ const Body = () => {
                 navigate('/feed');
             }
         }
-        catch (err) {
-            if (err.status === 401) {
+
+        catch (err: unknown) {
+            if (axios.isAxiosError(err) && err?.status === 401) {
                 navigate('/login');
+                console.log(err.message);
             }
-            console.log(err.message);
-        }
+          }
     };
 
     useEffect(() => {

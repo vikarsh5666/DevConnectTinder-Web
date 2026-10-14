@@ -2,9 +2,9 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const connectionRequestsSlice = createSlice({
   name: "connectionRequests",
-  initialState: null,
+  initialState: [] as any[],
   reducers: {
-    addRequests: (state, action) => action.payload,
+    addRequests: (_, action) => action.payload,
     removeRequest: (state, action) => {
       const newArray = state.filter((r) => r._id !== action.payload);
       return newArray;

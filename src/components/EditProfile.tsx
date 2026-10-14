@@ -5,7 +5,7 @@ import { BASE_URL } from "../utils/constants";
 import { useDispatch } from "react-redux";
 import { addUser } from "../utils/userSlice";
 
-const EditProfile = ({ user }) => {
+const EditProfile = ({ user }: { user?: any }) => {
   const [firstName, setFirstName] = useState(user.firstName);
   const [lastName, setLastName] = useState(user.lastName);
   const [photoUrl, setPhotoUrl] = useState(user.photoUrl);
@@ -37,8 +37,14 @@ const EditProfile = ({ user }) => {
       setTimeout(() => {
         setShowToast(false);
       }, 3000);
-    } catch (err) {
-      setError(err.response.data);
+    } catch (err: unknown) {
+      if (axios.isAxiosError(err)) {
+        setError(
+          err.response?.data?.message || "Something went wrong"
+        );
+      } else {
+        setError("Something went wrong");
+      }
     }
   };
 
@@ -110,8 +116,8 @@ const EditProfile = ({ user }) => {
                     <span className="label-text">About:</span>
                   </div>
                   <textarea className="textarea h-24" placeholder="About"
-                  value={about}
-                  onChange={(e) => setAbout(e.target.value)}
+                    value={about}
+                    onChange={(e) => setAbout(e.target.value)}
                   ></textarea>
                 </label>
               </div>

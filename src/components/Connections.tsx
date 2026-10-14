@@ -2,18 +2,18 @@ import axios from "axios";
 import { BASE_URL } from "../utils/constants";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import type { RootState } from "../utils/appstore";
 import { addConnections } from "../utils/connectionSlice";
 import { Link } from "react-router-dom";
 
 const Connections = () => {
-  const connections = useSelector((store) => store.connections);
+  const connections = useSelector((store: RootState) => store.connections);
   const dispatch = useDispatch();
   const fetchConnections = async () => {
     try {
       const res = await axios.get(BASE_URL + "/user/connections", {
         withCredentials: true,
       });
-      debugger;
       dispatch(addConnections(res.data));
     } catch (err) {
       // Handle Error Case
@@ -34,7 +34,7 @@ const Connections = () => {
       Connections <div className="badge badge-sm badge-secondary">{connections.length}</div>
       </span>
 
-      {connections.map((connection) => {
+      {connections.map((connection: any) => {
         const { _id, firstName, lastName, photoUrl, age, gender, about } =
           connection;
 

@@ -26,8 +26,14 @@ const Login = () => {
             dispatch(addUser(res?.data));
             navigate('/');
         }
-        catch (err) {
-            setError(err?.response?.data || "Something went wrong");
+        catch (err: unknown) {
+            if (axios.isAxiosError(err)) {
+                setError(
+                    err.response?.data?.message || "Something went wrong"
+                );
+            } else {
+                setError("Something went wrong");
+            }
         }
     };
 
@@ -38,11 +44,18 @@ const Login = () => {
                 { firstName, lastName, emailId, password },
                 { withCredentials: true }
             );
-            debugger;
             dispatch(addUser(res.data.data));
             return navigate("/profile");
-        } catch (err) {
-            setError(err?.response?.data || "Something went wrong");
+        } catch (err: unknown) {
+            if (axios.isAxiosError(err)) {
+                setError(
+                    err.response?.data?.message ||
+                    err.response?.data ||
+                    "Something went wrong"
+                );
+            } else {
+                setError("Something went wrong");
+            }
         }
     };
 
@@ -53,30 +66,30 @@ const Login = () => {
                     <h2 className="card-title justify-center">{isLoginForm ? "Login" : "Sign Up"}</h2>
                     <div>
                         {!isLoginForm && (
-                        <>
-                            <label className="form-control w-full max-w-xs my-2">
-                                <div className="label">
-                                    <span className="label-text">First Name</span>
-                                </div>
-                                <input
-                                    type="text"
-                                    value={firstName}
-                                    className="input input-bordered w-full max-w-xs"
-                                    onChange={(e) => setFirstName(e.target.value)}
-                                />
-                            </label>
-                            <label className="form-control w-full max-w-xs my-2">
-                                <div className="label">
-                                    <span className="label-text">Last Name</span>
-                                </div>
-                                <input
-                                    type="text"
-                                    value={lastName}
-                                    className="input input-bordered w-full max-w-xs"
-                                    onChange={(e) => setLastName(e.target.value)}
-                                />
-                            </label>
-                        </>
+                            <>
+                                <label className="form-control w-full max-w-xs my-2">
+                                    <div className="label">
+                                        <span className="label-text">First Name</span>
+                                    </div>
+                                    <input
+                                        type="text"
+                                        value={firstName}
+                                        className="input input-bordered w-full max-w-xs"
+                                        onChange={(e) => setFirstName(e.target.value)}
+                                    />
+                                </label>
+                                <label className="form-control w-full max-w-xs my-2">
+                                    <div className="label">
+                                        <span className="label-text">Last Name</span>
+                                    </div>
+                                    <input
+                                        type="text"
+                                        value={lastName}
+                                        className="input input-bordered w-full max-w-xs"
+                                        onChange={(e) => setLastName(e.target.value)}
+                                    />
+                                </label>
+                            </>
                         )}
                     </div>
                     <div>

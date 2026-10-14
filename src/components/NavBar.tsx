@@ -3,7 +3,7 @@ import type { TypedUseSelectorHook } from "react-redux";
 import type { RootState } from "../utils/appstore";
 import { removeUser } from "../utils/userSlice";
 import { BASE_URL } from "../utils/constants";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import axios from "axios";
 
 export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector;
@@ -13,16 +13,20 @@ const NavBar = () => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
 
-    const handleLogOut = async () => { 
-        await axios.post(BASE_URL + '/logout' , 
-            { withCredentials: true }) 
-            dispatch(removeUser());
-            return navigate('/login');
-    };
+    const handleLogOut = async () => {
+        try {
+          await axios.post(BASE_URL + "/logout", {}, { withCredentials: true });
+          dispatch(removeUser());
+          return navigate("/login");
+        } catch (err) {
+          // Error logic maybe redirect to error page
+          console.log(err);
+        }
+      };
     return (
         <div className="navbar bg-base-300 shadow-sm">
             <div className="flex-1">
-                <a className="btn btn-ghost text-xl">👨‍💻Dev Connect Tinder👨🏻‍💻</a>
+                <Link to="/" className="btn btn-ghost text-xl">👨‍💻Dev Connect Tinder👨🏻‍💻</Link>
             </div>
             {user && <div className="flex gap-2">
                 <div className="form-control flex gap-4 items-center">Welcome, {user.firstName}</div>
@@ -38,10 +42,10 @@ const NavBar = () => {
                         tabIndex={-1}
                         className="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow">
                         <li>
-                            <a className="justify-between">
+                            <Link to="/profile" className="justify-between">
                                 Profile
                                 <span className="badge">New</span>
-                            </a>
+                            </Link>
                         </li>
                         <li><a>Settings</a></li>
                         <li><a onClick={handleLogOut}>Logout</a></li>

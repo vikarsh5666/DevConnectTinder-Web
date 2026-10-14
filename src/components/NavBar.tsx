@@ -1,16 +1,14 @@
 import { useDispatch, useSelector } from "react-redux";
-import type { TypedUseSelectorHook } from "react-redux";
-import type { RootState } from "../utils/appstore";
 import { removeUser } from "../utils/userSlice";
 import { BASE_URL } from "../utils/constants";
 import { useNavigate, Link } from "react-router-dom";
 import axios from "axios";
-import { removeFeed } from "../utils/FeedSlice";
-
-export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector;
+import { removeUserFromFeed } from "../utils/feedSlice";
 
 const NavBar = () => {
-    const user = useSelector((store: RootState) => store.user);
+    const user = useSelector((store) => store.user);
+    const connectionRequest = useSelector((store) => store.connectionRequest);
+    const connections = useSelector((store) => store.connections);
     const navigate = useNavigate();
     const dispatch = useDispatch();
 
@@ -18,7 +16,7 @@ const NavBar = () => {
         try {
             await axios.post(BASE_URL + "/logout", {}, { withCredentials: true });
             dispatch(removeUser());
-            dispatch(removeFeed());
+            dispatch(removeUserFromFeed());
             return navigate("/login");
         } catch (err) {
             // Error logic maybe redirect to error page
@@ -46,10 +44,29 @@ const NavBar = () => {
                         <li>
                             <Link to="/profile" className="justify-between">
                                 Profile
-                                <span className="badge">New</span>
+                                {/* <span className="badge">New</span> */}
                             </Link>
                         </li>
-                        <li><a>Settings</a></li>
+                        <li><Link to="/connections">
+                            <span>
+                                Connection{" "}
+                                {connections?.length > 0 && (
+                                    <span className="badge badge-sm badge-secondary">
+                                        {connections.length}
+                                    </span>
+                                )}
+                            </span>
+                        </Link></li>
+                        <li><Link to="/connectionRequests">
+                            <span>
+                                Connection Requests{" "}
+                                {connectionRequest?.length > 0 && (
+                                    <span className="badge badge-sm badge-secondary">
+                                        {connectionRequest.length}
+                                    </span>
+                                )}
+                            </span>
+                        </Link></li>
                         <li><a onClick={handleLogOut}>Logout</a></li>
                     </ul>
                 </div>

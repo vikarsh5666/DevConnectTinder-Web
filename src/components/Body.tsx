@@ -1,49 +1,42 @@
-import axios from 'axios';
-import { Outlet, useNavigate } from "react-router-dom"
-import NavBar from "./NavBar"
+import { Outlet, useNavigate } from "react-router-dom";
+import NavBar from "./NavBar";
 import Footer from "./Footer";
+import axios from "axios";
 import { BASE_URL } from "../utils/constants";
-import { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import type { RootState } from "../utils/appstore";
-import { addUser } from '../utils/userSlice';
-
+import { useDispatch, useSelector } from "react-redux";
+import { addUser } from "../utils/userSlice";
+import { useEffect } from "react";
 
 const Body = () => {
-    const navigate = useNavigate();
-    const dispatch = useDispatch();
-    const userData = useSelector((store: RootState) => store.user);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const userData = useSelector((store) => store.user);
 
-    const fetcUser = async () => {
-        if (userData) return;
-        try {
-            const res = await axios.get(BASE_URL + "/profile/view", {
-                withCredentials: true
-            });
-            dispatch(addUser(res.data));
-            if (res.data) {
-                navigate('/feed');
-            }
-        }
+  const fetchUser = async () => {
+    if (userData) return;
+    try {
+      const res = await axios.get(BASE_URL + "/profile/view", {
+        withCredentials: true,
+      });
+      dispatch(addUser(res.data));
+    } catch (err) {
+      if (err.status === 401) {
+        navigate("/login");
+      }
+      console.error(err);
+    }
+  };
 
-        catch (err: unknown) {
-            if (axios.isAxiosError(err) && err?.status === 401) {
-                navigate('/login');
-                console.log(err.message);
-            }
-          }
-    };
+  useEffect(() => {
+    fetchUser();
+  }, []);
 
-    useEffect(() => {
-        fetcUser();
-    }, []);
-    return (
-        <div>
-            <NavBar />
-            <Outlet />
-            <Footer />
-        </div>
-    )
-}
-
-export default Body
+  return (
+    <div>
+      <NavBar />
+      <Outlet />
+      <Footer />
+    </div>
+  );
+};
+export default Body;

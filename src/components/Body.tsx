@@ -35,7 +35,10 @@ const Body = () => {
     return (
         <div>
             <NavBar />
-            <Outlet />
+            <main className="pt-16">
+                <Outlet />
+            </main>
+            {/* <Outlet /> */}
             <Footer />
         </div>
     );

@@ -25,7 +25,7 @@ const NavBar = () => {
         }
     };
     return (
-        <div className="navbar bg-base-300 shadow-sm">
+        <div className="fixed top-0 left-0 right-0 z-[9999] navbar w-full bg-base-300 shadow-sm">
             <div className="flex-1">
                 <Link to="/" className="btn btn-ghost text-xl">👨‍💻Dev Connect Tinder👨🏻‍💻</Link>
             </div>

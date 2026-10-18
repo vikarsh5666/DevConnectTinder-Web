@@ -39,7 +39,7 @@ const ConnectionRequests = () => {
   if (requests.length === 0)
     return <h1 className="flex justify-center my-10"> No Requests Found</h1>;
   return (
-    <div className="text-center my-10">
+    <div className="text-center my-4">
       {/* <h1 className="text-bold text-white text-3xl">Connection Requests</h1> */}
       <span className="text-bold text-white text-3xl">
         Connection Requests <div className="badge badge-sm badge-secondary">{requests.length}</div>

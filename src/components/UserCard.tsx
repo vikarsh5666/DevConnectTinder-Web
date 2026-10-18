@@ -5,7 +5,6 @@ import {removeUserFromFeed} from "../utils/feedSlice";
 
 const UserCard = (props: any) => {
     const { _id, firstName, lastName, photoUrl, about, age, gender } = props.user;
-    debugger;
     const { isHideActionBtn } = props;
     const dispatch = useDispatch();
 
@@ -24,7 +23,7 @@ const UserCard = (props: any) => {
 
 
     return (
-        <div className="card bg-base-300 shadow-sm">
+        <div className="ard bg-base-300 w-full max-w-sm mx-auto shadow-sm">
             <figure>
                 <img
                     className="h-64 w-full object-cover"

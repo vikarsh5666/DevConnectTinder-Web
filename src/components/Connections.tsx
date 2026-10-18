@@ -70,7 +70,6 @@ const Connections = () => {
       {connections.map((connection: any) => {
         const { _id, firstName, lastName, photoUrl, age, gender, about } =
           connection;
-        debugger;
         return (
           <div
             key={_id}

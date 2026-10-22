@@ -60,52 +60,80 @@ const Login = () => {
     };
 
     return (
-        <div className='flex justify-center'>
-            <div className="card bg-base-300 w-96 shadow-sm my-4">
-                <div className="card-body">
-                    <h2 className="card-title justify-center">{isLoginForm ? "Login" : "Sign Up"}</h2>
-                    <div>
-                        {!isLoginForm && (
-                            <>
-                                <label className="form-control w-full max-w-xs my-2">
-                                    <div className="label">
-                                        <span className="label-text">First Name</span>
-                                    </div>
-                                    <input
-                                        type="text"
-                                        value={firstName}
-                                        className="input input-bordered w-full max-w-xs"
-                                        onChange={(e) => setFirstName(e.target.value)}
-                                    />
-                                </label>
-                                <label className="form-control w-full max-w-xs my-2">
-                                    <div className="label">
-                                        <span className="label-text">Last Name</span>
-                                    </div>
-                                    <input
-                                        type="text"
-                                        value={lastName}
-                                        className="input input-bordered w-full max-w-xs"
-                                        onChange={(e) => setLastName(e.target.value)}
-                                    />
-                                </label>
-                            </>
-                        )}
+        <div className="flex min-h-[85vh] items-center justify-center px-4 py-10">
+            <div className="card w-full max-w-md overflow-hidden border border-primary/20 bg-base-100 shadow-2xl">
+                {/* Top accent */}
+                <div className="h-1.5 bg-gradient-to-r from-primary via-secondary to-primary" />
+
+                <div className="card-body gap-5 p-6 sm:p-8">
+
+                    {/* Header */}
+                    <div className="mb-2 flex flex-col items-center gap-3 text-center">
+                        <div className="flex h-20 w-20 items-center justify-center rounded-2xl bg-primary/10 text-5xl shadow-inner">
+                            👨‍💻
+                        </div>
+
+                        <h2 className="text-3xl font-extrabold tracking-tight">
+                            {isLoginForm ? "Welcome Back!" : "Join Dev Connect"}
+                        </h2>
+
+                        <p className="text-sm text-base-content/60">
+                            {isLoginForm
+                                ? "Login to connect with amazing developers."
+                                : "Create your account and grow your network."}
+                        </p>
                     </div>
-                    <div>
-                        <label className="input validator">
-                            <svg className="h-[1em] opacity-50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                                <g
-                                    strokeLinejoin="round"
-                                    strokeLinecap="round"
-                                    strokeWidth="2.5"
-                                    fill="none"
-                                    stroke="currentColor"
-                                >
-                                    <rect width="20" height="16" x="2" y="4" rx="2"></rect>
-                                    <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path>
-                                </g>
+
+                    {/* Signup fields */}
+                    {!isLoginForm && (
+                        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                            <label className="form-control w-full">
+                                <div className="label">
+                                    <span className="label-text font-medium">First Name</span>
+                                </div>
+                                <input
+                                    type="text"
+                                    placeholder="First name"
+                                    value={firstName}
+                                    className="input input-bordered w-full transition focus:border-primary"
+                                    onChange={(e) => setFirstName(e.target.value)}
+                                />
+                            </label>
+
+                            <label className="form-control w-full">
+                                <div className="label">
+                                    <span className="label-text font-medium">Last Name</span>
+                                </div>
+                                <input
+                                    type="text"
+                                    placeholder="Last name"
+                                    value={lastName}
+                                    className="input input-bordered w-full transition focus:border-primary"
+                                    onChange={(e) => setLastName(e.target.value)}
+                                />
+                            </label>
+                        </div>
+                    )}
+
+                    {/* Email */}
+                    <div className="form-control w-full gap-2">
+                        <label className="label">
+                            <span className="label-text font-medium">Email Address</span>
+                        </label>
+
+                        <label className="input input-bordered validator flex w-full items-center gap-3 focus-within:border-primary">
+                            <svg
+                                className="h-[1em] opacity-60"
+                                xmlns="http://www.w3.org/2000/svg"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                strokeWidth="2"
+                            >
+                                <rect width="20" height="16" x="2" y="4" rx="2" />
+                                <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
                             </svg>
+
                             <input
                                 type="email"
                                 placeholder="mail@site.com"
@@ -114,54 +142,99 @@ const Login = () => {
                                 onChange={(e) => setEmailId(e.target.value)}
                             />
                         </label>
-                        <div className="validator-hint hidden">Enter valid email address</div>
-                    </div>
-                    <div>
-                        <label className="input validator">
-                            <svg className="h-[1em] opacity-50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                                <g
-                                    strokeLinejoin="round"
-                                    strokeLinecap="round"
-                                    strokeWidth="2.5"
-                                    fill="none"
-                                    stroke="currentColor"
-                                >
-                                    <path
-                                        d="M2.586 17.414A2 2 0 0 0 2 18.828V21a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h1a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h.172a2 2 0 0 0 1.414-.586l.814-.814a6.5 6.5 0 1 0-4-4z"
-                                    ></path>
-                                    <circle cx="16.5" cy="7.5" r=".5" fill="currentColor"></circle>
-                                </g>
-                            </svg>
-                            <input
-                                type="password"
-                                value={password}
-                                required
-                                placeholder="Password"
-                                minLength={8}
-                                onChange={(e) => setPassword(e.target.value)}
-                                pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}"
-                                title="Must be more than 8 characters, including number, lowercase letter, uppercase letter"
-                            />
-                        </label>
+
                         <p className="validator-hint hidden">
-                            Must be more than 8 characters, including
-                            <br />At least one number <br />At least one lowercase letter <br />At least one uppercase letter
+                            Enter a valid email address.
                         </p>
                     </div>
-                    {error && <p className='text-red-600'>{error}</p>}
-                    <div className="card-actions justify-center">
-                        <button className="btn btn-primary"
-                            onClick={isLoginForm ? handleLogin : handleSignUp}
-                        >{isLoginForm ? "Login" : "Sign Up"}</button>
+
+                    {/* Password */}
+                    <div className="form-control w-full gap-2">
+                        <label className="label">
+                            <span className="label-text font-medium">Password</span>
+                        </label>
+
+                        <label className="input input-bordered validator flex w-full items-center gap-3 focus-within:border-primary">
+                            <svg
+                                className="h-[1em] opacity-60"
+                                xmlns="http://www.w3.org/2000/svg"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                strokeWidth="2"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                            >
+                                <rect x="3" y="11" width="18" height="11" rx="2" />
+                                <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                            </svg>
+
+                            <input
+                                type="password"
+                                placeholder="Password"
+                                required
+                                minLength={8}
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                                pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}"
+                                title="Must contain at least 8 characters, one number, one lowercase and one uppercase letter"
+                            />
+                        </label>
+
+                        <p className="validator-hint hidden">
+                            Must contain at least 8 characters, including:
+                            <br />At least one number
+                            <br />At least one lowercase letter
+                            <br />At least one uppercase letter
+                        </p>
                     </div>
-                    <p
-                        className="m-auto cursor-pointer py-2"
-                        onClick={() => setIsLoginForm((value) => !value)}
+
+                    {/* Error */}
+                    {error && (
+                        <div className="alert alert-error py-3 text-sm">
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                className="h-5 w-5 shrink-0"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                            >
+                                <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth="2"
+                                    d="M12 9v4m0 4h.01M5.07 19h13.86a2 2 0 0 0 1.73-3L13.73 4a2 2 0 0 0-3.46 0L3.34 16a2 2 0 0 0 1.73 3Z"
+                                />
+                            </svg>
+                            <span>{error}</span>
+                        </div>
+                    )}
+
+                    {/* Submit */}
+                    <button
+                        className="btn btn-primary mt-2 w-full shadow-lg transition duration-200 hover:scale-[1.02] hover:shadow-primary/30"
+                        onClick={isLoginForm ? handleLogin : handleSignUp}
                     >
-                        {isLoginForm
-                            ? "New User? Signup Here"
-                            : "Existing User? Login Here"}
+                        {isLoginForm ? "Login to Your Account" : "Create Account"}
+                        <span className="text-lg">→</span>
+                    </button>
+
+                    {/* Toggle */}
+                    <div className="divider my-0 text-xs text-base-content/40">
+                        OR
+                    </div>
+
+                    <p className="text-center text-sm text-base-content/70">
+                        {isLoginForm ? "New to Dev Connect?" : "Already have an account?"}
+                        <button
+                            type="button"
+                            className="ml-1 font-bold text-primary transition hover:underline"
+                            onClick={() => setIsLoginForm((value) => !value)}
+                        >
+                            {isLoginForm ? "Sign Up" : "Login"}
+                        </button>
                     </p>
+
                 </div>
             </div>
         </div>

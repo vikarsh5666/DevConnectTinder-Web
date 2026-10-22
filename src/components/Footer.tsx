@@ -15,7 +15,7 @@ const Footer = () => {
         </svg>
 
         <p className="truncate text-xs leading-tight sm:text-sm">
-          © 2026 All rights reserved.
+          © {new Date().getFullYear()} All rights reserved.
         </p>
       </aside>
 

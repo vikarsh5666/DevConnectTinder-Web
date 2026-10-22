@@ -227,16 +227,44 @@ const EditProfile = ({ user }: EditProfileProps) => {
   return (
     <>
 
-      <div className="my-10 md:flex md:items-start md:justify-center md:gap-8">
-        <div className="mx-4 mb-8 flex justify-center md:mb-0">
-          <div className="card w-96 bg-base-300 shadow-xl">
-            <div className="card-body">
-              <h2 className="card-title justify-center">Edit Profile</h2>
+      <div className="mx-auto my-8 max-w-6xl px-4 sm:my-12 sm:px-6">
+        <div className="grid grid-cols-1 items-start gap-8 md:grid-cols-2">
 
-              <div className="flex flex-col items-center gap-3">
+          {/* Edit Profile Card */}
+          <div className="card w-full overflow-hidden border border-primary/20 bg-base-100 shadow-2xl transition-all duration-300 hover:shadow-primary/10">
+
+            {/* Gradient Accent */}
+            <div className="h-1.5 bg-gradient-to-r from-primary via-secondary to-primary" />
+
+            <div className="card-body gap-5 p-5 sm:p-8">
+
+              {/* Header */}
+              <div className="flex items-center justify-center gap-3 text-center">
+                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-2xl">
+                  👨‍💻
+                </div>
+
+                <div>
+                  <h2 className="text-xl font-extrabold sm:text-2xl">
+                    Edit Profile
+                  </h2>
+                  <p className="text-xs text-base-content/60">
+                    Update your details
+                  </p>
+                </div>
+              </div>
+
+              <div className="divider my-0" />
+
+              {/* Profile Photo */}
+              <div className="flex flex-col items-center gap-4 rounded-2xl border border-base-content/10 bg-base-200/50 p-5">
                 <div className="avatar">
-                  <div className="w-32 rounded-full ring ring-primary ring-offset-2 ring-offset-base-100">
-                    <img src={displayedPhoto} alt="Profile" className="object-cover" />
+                  <div className="w-28 rounded-full ring-4 ring-primary ring-offset-4 ring-offset-base-100 shadow-xl sm:w-32">
+                    <img
+                      src={displayedPhoto}
+                      alt="Profile"
+                      className="object-cover"
+                    />
                   </div>
                 </div>
 
@@ -251,7 +279,7 @@ const EditProfile = ({ user }: EditProfileProps) => {
 
                 <button
                   type="button"
-                  className="btn btn-outline btn-primary btn-sm"
+                  className="btn btn-primary btn-sm shadow-md sm:btn-md"
                   disabled={uploading}
                   onClick={() => fileInputRef.current?.click()}
                 >
@@ -261,54 +289,135 @@ const EditProfile = ({ user }: EditProfileProps) => {
                       Uploading...
                     </>
                   ) : (
-                    "📷 Upload Photo"
+                    <>
+                      <span>📷</span>
+                      Change Profile Photo
+                    </>
                   )}
                 </button>
 
-                <p className="text-xs opacity-70">JPG, PNG, WebP · Maximum 5 MB</p>
+                <p className="text-center text-xs text-base-content/50">
+                  JPG, PNG or WebP · Maximum 5 MB
+                </p>
               </div>
 
-              <label className="form-control my-2 w-full">
-                <div className="label"><span className="label-text">First Name:</span></div>
-                <input className="input input-bordered w-full" type="text" value={firstName} onChange={(e) => setFirstName(e.target.value)} />
+              {/* First Name */}
+              <label className="form-control w-full gap-1">
+                <span className="label-text font-semibold">First Name</span>
+                <input
+                  className="input input-bordered w-full transition focus:border-primary"
+                  type="text"
+                  placeholder="Enter first name"
+                  value={firstName}
+                  onChange={(e) => setFirstName(e.target.value)}
+                />
               </label>
 
-              <label className="form-control my-2 w-full">
-                <div className="label"><span className="label-text">Last Name:</span></div>
-                <input className="input input-bordered w-full" type="text" value={lastName} onChange={(e) => setLastName(e.target.value)} />
+              {/* Last Name */}
+              <label className="form-control w-full gap-1">
+                <span className="label-text font-semibold">Last Name</span>
+                <input
+                  className="input input-bordered w-full transition focus:border-primary"
+                  type="text"
+                  placeholder="Enter last name"
+                  value={lastName}
+                  onChange={(e) => setLastName(e.target.value)}
+                />
               </label>
 
-              <label className="form-control my-2 w-full">
-                <div className="label"><span className="label-text">Age:</span></div>
-                <input className="input input-bordered w-full" type="number" value={age} onChange={(e) => setAge(e.target.value)} />
+              {/* Age and Gender */}
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <label className="form-control w-full gap-1">
+                  <span className="label-text font-semibold">Age</span>
+                  <input
+                    className="input input-bordered w-full transition focus:border-primary"
+                    type="number"
+                    placeholder="Your age"
+                    value={age}
+                    onChange={(e) => setAge(e.target.value)}
+                  />
+                </label>
+
+                <label className="form-control w-full gap-1">
+                  <span className="label-text font-semibold">Gender</span>
+                  <input
+                    className="input input-bordered w-full transition focus:border-primary"
+                    type="text"
+                    placeholder="Enter gender"
+                    value={gender}
+                    onChange={(e) => setGender(e.target.value)}
+                  />
+                </label>
+              </div>
+
+              {/* About */}
+              <label className="form-control w-full gap-1">
+                <span className="label-text font-semibold">About Me</span>
+                <textarea
+                  className="textarea textarea-bordered min-h-28 w-full transition focus:border-primary"
+                  placeholder="Tell us about yourself, your skills and interests..."
+                  value={about}
+                  onChange={(e) => setAbout(e.target.value)}
+                />
+                <span className="text-right text-xs text-base-content/40">
+                  Share your developer journey 🚀
+                </span>
               </label>
 
-              <label className="form-control my-2 w-full">
-                <div className="label"><span className="label-text">Gender:</span></div>
-                <input className="input input-bordered w-full" type="text" value={gender} onChange={(e) => setGender(e.target.value)} />
-              </label>
+              {/* Error */}
+              {error && (
+                <div role="alert" className="alert alert-error text-sm">
+                  <span>{error}</span>
+                </div>
+              )}
 
-              <label className="form-control my-2 w-full">
-                <div className="label"><span className="label-text">About:</span></div>
-                <textarea className="textarea textarea-bordered h-24" placeholder="Tell us about yourself..." value={about} onChange={(e) => setAbout(e.target.value)} />
-              </label>
-
-              {error && <p role="alert" className="text-sm text-error">{error}</p>}
-
-              <div className="card-actions mt-4 justify-center">
-                <button type="button" className="btn btn-primary w-full" onClick={saveProfile} disabled={uploading}>
+              {/* Save Button */}
+              <div className="card-actions mt-2">
+                <button
+                  type="button"
+                  className="btn btn-primary w-full shadow-lg transition duration-300 hover:scale-[1.01] hover:shadow-primary/30"
+                  onClick={saveProfile}
+                  disabled={uploading}
+                >
+                  <span>💾</span>
                   Save Profile
                 </button>
               </div>
+
             </div>
           </div>
-        </div>
 
-        <div className="flex justify-center">
-          <UserCard
-            user={{ ...user, firstName, lastName, photoUrl, age, gender, about }}
-            isHideActionBtn={true}
-          />
+          {/* Live Profile Preview */}
+          <div className="flex w-full flex-col items-center gap-4 md:sticky md:top-24">
+            <div className="text-center">
+              <h2 className="text-xl font-bold sm:text-2xl">
+                Profile Preview
+              </h2>
+              <p className="mt-1 text-sm text-base-content/60">
+                This is how others see your profile.
+              </p>
+            </div>
+
+            <div className="w-full max-w-sm rounded-2xl border border-primary/20 bg-base-100 p-3 shadow-xl">
+              <UserCard
+                user={{
+                  ...user,
+                  firstName,
+                  lastName,
+                  photoUrl,
+                  age,
+                  gender,
+                  about,
+                }}
+                isHideActionBtn={true}
+              />
+            </div>
+
+            <p className="text-center text-xs text-base-content/50">
+              Changes appear here as you edit your details.
+            </p>
+          </div>
+
         </div>
       </div>
 

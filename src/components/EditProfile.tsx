@@ -86,12 +86,6 @@ const EditProfile = ({ user }: EditProfileProps) => {
   const toastTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const dispatch = useDispatch();
 
-  const showSuccessToast = useCallback(() => {
-    if (toastTimerRef.current) clearTimeout(toastTimerRef.current);
-    setShowToast(true);
-    toastTimerRef.current = setTimeout(() => setShowToast(false), 3000);
-  }, []);
-
   useEffect(() => {
     return () => {
       if (selectedImage) URL.revokeObjectURL(selectedImage);
@@ -115,7 +109,6 @@ const EditProfile = ({ user }: EditProfileProps) => {
     if (!file) return;
 
     setError("");
-    setShowToast(false);
 
     const allowedTypes = ["image/jpeg", "image/png", "image/webp"];
     if (!allowedTypes.includes(file.type)) {
@@ -150,8 +143,6 @@ const EditProfile = ({ user }: EditProfileProps) => {
     if (!selectedImage || !croppedAreaPixels || uploading) return;
 
     setError("");
-    setShowToast(false);
-
     try {
       setUploading(true);
       const croppedBlob = await getCroppedImg(selectedImage, croppedAreaPixels);
@@ -180,7 +171,10 @@ const EditProfile = ({ user }: EditProfileProps) => {
       URL.revokeObjectURL(selectedImage);
       setSelectedImage(null);
       setCroppedAreaPixels(null);
-      showSuccessToast();
+      setShowToast(true);
+      setTimeout(() => {
+        setShowToast(false);
+      }, 3000);
     } catch (err: unknown) {
       if (axios.isAxiosError(err)) {
         setError(err.response?.data?.message || "Failed to upload profile photo.");
@@ -232,7 +226,7 @@ const EditProfile = ({ user }: EditProfileProps) => {
 
   return (
     <>
-    
+
       <div className="my-10 md:flex md:items-start md:justify-center md:gap-8">
         <div className="mx-4 mb-8 flex justify-center md:mb-0">
           <div className="card w-96 bg-base-300 shadow-xl">

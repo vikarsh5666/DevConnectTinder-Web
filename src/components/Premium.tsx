@@ -50,8 +50,45 @@ const Premium = () => {
     const rzp = new window.Razorpay(options);
     rzp.open();
   };
+
+  const alreadyPremiumElement = () => {
+    return (<div className="flex min-h-[70vh] items-center justify-center px-4">
+      <div className="card w-full max-w-md border border-amber-400/30 bg-base-100 shadow-2xl">
+        <div className="card-body items-center gap-4 text-center">
+
+          <div className="flex h-20 w-20 items-center justify-center rounded-full bg-amber-400/15">
+            <span className="text-5xl">👑</span>
+          </div>
+
+          <div className="badge badge-warning badge-outline">
+            PREMIUM MEMBER
+          </div>
+
+          <h2 className="card-title text-2xl font-bold">
+            You're Already Premium!
+          </h2>
+
+          <p className="text-base-content/70">
+            You're already enjoying the premium experience.
+            Keep connecting with developers and building your network!
+          </p>
+
+          <div className="card-actions mt-3 w-full">
+            <button
+              className="btn btn-warning w-full"
+              onClick={() => window.history.back()}
+            >
+              Continue Exploring
+            </button>
+          </div>
+
+        </div>
+      </div>
+    </div>
+    )
+  };
   return isUserPremium ? (
-    "You're are already a premium user"
+    alreadyPremiumElement()
   ) : (
     <div className="m-10">
       <div className="flex w-full">

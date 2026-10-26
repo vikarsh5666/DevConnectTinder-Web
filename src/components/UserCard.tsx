@@ -4,6 +4,7 @@ import axios from "axios";
 import { BASE_URL } from "../utils/constants";
 import { useDispatch } from "react-redux";
 import { removeUserFromFeed } from "../utils/feedSlice";
+import { useLocation } from "react-router-dom";
 
 const UserCard = (props: any) => {
     const {
@@ -18,7 +19,7 @@ const UserCard = (props: any) => {
 
     const { isHideActionBtn } = props;
     const dispatch = useDispatch();
-
+    const location = useLocation();
     const [swipeX, setSwipeX] = useState(0);
     const [isAnimating, setIsAnimating] = useState(false);
 
@@ -27,7 +28,8 @@ const UserCard = (props: any) => {
     const isDragging = useRef(false);
     const isAnimatingRef = useRef(false);
     const cardRef = useRef<HTMLDivElement>(null);
-
+    const isConnections = location.pathname === "/connections";
+    const isProfile = location.pathname === "/profile";
     const handleSendRequest = async (
         status: "interested" | "ignored",
         userId: string
@@ -51,7 +53,7 @@ const UserCard = (props: any) => {
     };
 
     const handleStart = (clientX: number) => {
-        if (isAnimatingRef.current) return;
+        if ((isConnections || isProfile) || isAnimatingRef.current) return;
 
         startX.current = clientX;
         currentX.current = 0;
@@ -68,7 +70,7 @@ const UserCard = (props: any) => {
     };
 
     const handleEnd = async () => {
-        if (!isDragging.current) return;
+        if ((isConnections || isProfile) || !isDragging.current) return;
 
         isDragging.current = false;
 

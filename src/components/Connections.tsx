@@ -114,23 +114,25 @@ const Connections = () => {
             className="modal"
             open
           >
-            <div className="modal-box">
+            <div className="modal-box relative">
+              <button
+                onClick={() => setIsOpenConnectionProfile(false)}
+                aria-label="Close profile"
+                className="btn btn-circle btn-sm absolute right-3 top-18 z-10
+             bg-base-100 text-base-content
+             border-2 border-white/70
+             shadow-lg
+             hover:bg-primary hover:text-primary-content
+             hover:border-primary
+             transition-all duration-200"
+              >
+                <span className="text-lg font-bold">✕</span>
+              </button>
+
               <UserCard
                 user={selectedConnection}
                 isHideActionBtn={true}
               />
-
-              <div className="modal-action flex items-center justify-center">
-                <button
-                  className="btn btn-primary"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setIsOpenConnectionProfile(false)
-                  }}
-                >
-                  Close
-                </button>
-              </div>
             </div>
           </dialog>
         )}

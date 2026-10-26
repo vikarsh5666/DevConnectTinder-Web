@@ -1,71 +1,77 @@
-import axios from "axios";
-import { BASE_URL } from "../utils/constants";
-import { useDispatch, useSelector } from "react-redux";
-import type { RootState } from "../utils/appstore";
+import { useEffect, useState } from "react";
+import PageLoader from "./PageLoader";
+import api from "../utils/api";
 import { addRequests, removeRequest } from "../utils/connectionRequestsSlice";
-import { useEffect } from "react";
+import { useAppDispatch, useAppSelector } from "../utils/hooks";
 
 const ConnectionRequests = () => {
-  const requests = useSelector((store: RootState) => store.connectionRequest);
-  const dispatch = useDispatch();
-  const reviewRequest = async (
-    status: "accepted" | "rejected",
-    _id: string
-    ) => {
-    try {
-      axios.post(
-        BASE_URL + "/request/review/" + status + "/" + _id,
-        {},
-        { withCredentials: true }
-      );
-      dispatch(removeRequest(_id));
-    } catch (err) { }
-  };
+  const requests = useAppSelector((store) => store.connectionRequest);
+  const dispatch = useAppDispatch();
+  const [isLoading, setIsLoading] = useState(requests.length === 0);
 
-  const fetchRequests = async () => {
+  const reviewRequest = async (status: "accepted" | "rejected", _id: string) => {
     try {
-      const res = await axios.get(BASE_URL + "/user/requests/received", {
-        withCredentials: true,
-      });
-      dispatch(addRequests(res.data.data));
-    } catch (err) { }
+      await api.post(`/request/review/${status}/${_id}`);
+      dispatch(removeRequest(_id));
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   useEffect(() => {
-    fetchRequests();
-  }, []);
-  if (!requests) return;
+    let cancelled = false;
 
-  if (requests.length === 0)
-    return <h1 className="flex justify-center my-10"> No Requests Found</h1>;
+    const fetchRequests = async () => {
+      try {
+        const res = await api.get("/user/requests/received");
+        if (!cancelled) dispatch(addRequests(res.data.data));
+      } catch (err) {
+        console.error(err);
+      } finally {
+        if (!cancelled) setIsLoading(false);
+      }
+    };
+
+    fetchRequests();
+    return () => {
+      cancelled = true;
+    };
+  }, [dispatch]);
+
+  if (isLoading) return <PageLoader label="Loading requests..." />;
+  if (requests.length === 0) {
+    return <h1 className="flex justify-center my-10">No Requests Found</h1>;
+  }
+
   return (
     <div className="text-center my-4">
-      {/* <h1 className="text-bold text-white text-3xl">Connection Requests</h1> */}
       <span className="text-bold text-white text-3xl">
-        Connection Requests <div className="badge badge-sm badge-secondary">{requests.length}</div>
+        Connection Requests{" "}
+        <div className="badge badge-sm badge-secondary">{requests.length}</div>
       </span>
 
       {requests.map((request) => {
-        const { _id, firstName, lastName, photoUrl, age, gender, about } =
+        const { firstName, lastName, photoUrl, age, gender, about } =
           request.fromUserId;
 
         return (
           <div
-            key={_id}
+            key={request._id}
             className="flex items-center m-4 p-4 rounded-lg bg-base-300 w-full max-w-3xl mx-auto"
           >
             <div className="w-50">
               <img
-                alt="photo"
-                className="w-20 h-20 rounded-full"
+                alt={`${firstName} ${lastName}`}
+                className="w-20 h-20 rounded-full object-cover"
                 src={photoUrl}
+                loading="lazy"
               />
             </div>
-            <div className="text-left mx-4 ">
+            <div className="text-left mx-4">
               <h2 className="font-bold text-xl">
-                {firstName + " " + lastName}
+                {firstName} {lastName}
               </h2>
-              {age && gender && <p>{age + ", " + gender}</p>}
+              {age && gender && <p>{age}, {gender}</p>}
               <p>{about}</p>
             </div>
             <div className="flex">
@@ -88,4 +94,5 @@ const ConnectionRequests = () => {
     </div>
   );
 };
+
 export default ConnectionRequests;

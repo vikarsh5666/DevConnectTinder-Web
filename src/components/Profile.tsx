@@ -1,15 +1,10 @@
-import { useSelector } from "react-redux";
-import type { RootState } from "../utils/appstore";
 import EditProfile from "./EditProfile";
+import { useAppSelector } from "../utils/hooks";
 
 const Profile = () => {
-  const user = useSelector((store: RootState) => store.user);
-  return (
-    user && (
-      <div>
-        <EditProfile user={user} />
-      </div>
-    )
-  );
+  const user = useAppSelector((store) => store.user);
+  if (!user) return null;
+  return <EditProfile user={user} />;
 };
+
 export default Profile;

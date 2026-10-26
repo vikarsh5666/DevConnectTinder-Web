@@ -1,46 +1,53 @@
-import { Outlet, useNavigate } from "react-router-dom";
+import { Suspense, useEffect } from "react";
+import { Outlet, useLocation, useNavigate } from "react-router-dom";
+import axios from "axios";
 import NavBar from "./NavBar";
 import Footer from "./Footer";
-import axios from "axios";
-import { BASE_URL } from "../utils/constants";
-import { useDispatch, useSelector } from "react-redux";
+import PageLoader from "./PageLoader";
+import api from "../utils/api";
 import { addUser } from "../utils/userSlice";
-import { useEffect } from "react";
-import type { RootState } from "../utils/appstore";
+import { useAppDispatch, useAppSelector } from "../utils/hooks";
 
 const Body = () => {
-    const dispatch = useDispatch();
-    const navigate = useNavigate();
-    const userData = useSelector((store: RootState) => store.user);
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const userData = useAppSelector((store) => store.user);
+
+  useEffect(() => {
+    if (userData || location.pathname === "/login") return;
+
+    const controller = new AbortController();
 
     const fetchUser = async () => {
-        if (userData) return;
-        try {
-            const res = await axios.get(BASE_URL + "/profile/view", {
-                withCredentials: true,
-            });
-            dispatch(addUser(res.data));
-        } catch (err: unknown) {
-            console.error(err);
-            if (axios.isAxiosError(err) && err.response?.status === 401) {
-                navigate("/login");
-            }
+      try {
+        const res = await api.get("/profile/view", { signal: controller.signal });
+        dispatch(addUser(res.data));
+      } catch (err: unknown) {
+        if (axios.isAxiosError(err) && err.code === "ERR_CANCELED") return;
+        console.error(err);
+        if (axios.isAxiosError(err) && err.response?.status === 401) {
+          navigate("/login");
         }
+      }
     };
 
-    useEffect(() => {
-        fetchUser();
-    }, []);
+    fetchUser();
 
-    return (
-        <div>
-            <NavBar />
-            <main className="pt-16">
-                <Outlet />
-            </main>
-            {/* <Outlet /> */}
-            <Footer />
-        </div>
-    );
+    return () => controller.abort();
+  }, [userData, location.pathname, dispatch, navigate]);
+
+  return (
+    <div>
+      <NavBar />
+      <main className="pt-16">
+        <Suspense fallback={<PageLoader />}>
+          <Outlet />
+        </Suspense>
+      </main>
+      <Footer />
+    </div>
+  );
 };
+
 export default Body;

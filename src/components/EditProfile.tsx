@@ -1,14 +1,14 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { Area } from "react-easy-crop";
 import Cropper from "react-easy-crop";
-import axios from "axios";
-import { useDispatch } from "react-redux";
 import UserCard from "./UserCard";
-import { BASE_URL } from "../utils/constants";
+import api, { getErrorMessage } from "../utils/api";
 import { addUser } from "../utils/userSlice";
+import { useAppDispatch } from "../utils/hooks";
+import type { User } from "../utils/types";
 
 type EditProfileProps = {
-  user?: any;
+  user: User;
 };
 
 type PixelCrop = {
@@ -84,7 +84,13 @@ const EditProfile = ({ user }: EditProfileProps) => {
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const toastTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
+
+  const showSuccessToast = () => {
+    setShowToast(true);
+    if (toastTimerRef.current) clearTimeout(toastTimerRef.current);
+    toastTimerRef.current = setTimeout(() => setShowToast(false), 3000);
+  };
 
   useEffect(() => {
     return () => {
@@ -149,11 +155,7 @@ const EditProfile = ({ user }: EditProfileProps) => {
       const formData = new FormData();
       formData.append("profilePhoto", croppedBlob, "profile-photo.jpg");
 
-      const response = await axios.post(
-        `${BASE_URL}/profile/photo`,
-        formData,
-        { withCredentials: true }
-      );
+      const response = await api.post("/profile/photo", formData);
 
       // Preserve the response shape used by the existing backend.
       const uploadedPhotoUrl =
@@ -171,18 +173,9 @@ const EditProfile = ({ user }: EditProfileProps) => {
       URL.revokeObjectURL(selectedImage);
       setSelectedImage(null);
       setCroppedAreaPixels(null);
-      setShowToast(true);
-      setTimeout(() => {
-        setShowToast(false);
-      }, 3000);
+      showSuccessToast();
     } catch (err: unknown) {
-      if (axios.isAxiosError(err)) {
-        setError(err.response?.data?.message || "Failed to upload profile photo.");
-      } else if (err instanceof Error) {
-        setError(err.message || "Something went wrong while uploading.");
-      } else {
-        setError("Something went wrong while uploading.");
-      }
+      setError(getErrorMessage(err, "Failed to upload profile photo."));
     } finally {
       setUploading(false);
     }
@@ -192,31 +185,18 @@ const EditProfile = ({ user }: EditProfileProps) => {
     //Clear Errors
     setError("");
     try {
-      const res = await axios.patch(
-        BASE_URL + "/profile/edit",
-        {
-          firstName,
-          lastName,
-          photoUrl,
-          age,
-          gender,
-          about,
-        },
-        { withCredentials: true }
-      );
-      dispatch(addUser(res?.data?.data));
-      setShowToast(true);
-      setTimeout(() => {
-        setShowToast(false);
-      }, 3000);
+      const res = await api.patch("/profile/edit", {
+        firstName,
+        lastName,
+        photoUrl,
+        age,
+        gender,
+        about,
+      });
+      dispatch(addUser(res.data.data));
+      showSuccessToast();
     } catch (err: unknown) {
-      if (axios.isAxiosError(err)) {
-        setError(
-          err.response?.data?.message || "Something went wrong"
-        );
-      } else {
-        setError("Something went wrong");
-      }
+      setError(getErrorMessage(err));
     }
   };
 

@@ -1,10 +1,8 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useParams, useLocation, useNavigate } from "react-router-dom";
 import { createSocketConnection } from "../utils/socket";
-import { useSelector } from "react-redux";
-import axios from "axios";
-import { BASE_URL } from "../utils/constants";
-import type { RootState } from "../utils/appstore";
+import api from "../utils/api";
+import { useAppSelector } from "../utils/hooks";
 
 interface Message {
     _id: string;
@@ -38,7 +36,7 @@ const Chat = () => {
 
     const messagesEndRef = useRef<HTMLDivElement | null>(null);
 
-    const user = useSelector((store: RootState) => store.user);
+    const user = useAppSelector((store) => store.user);
     const userId = user?._id;
 
     const socketRef = useRef<
@@ -53,10 +51,7 @@ const Chat = () => {
 
         const fetchChatMessages = async () => {
             try {
-                const response = await axios.get(
-                    `${BASE_URL}/chat/${targetUserId}`,
-                    { withCredentials: true }
-                );
+                const response = await api.get(`/chat/${targetUserId}`);
 
                 const chatMessages: Message[] = (
                     response.data.messages || []
@@ -221,9 +216,14 @@ const Chat = () => {
         setNewMessage("");
     };
 
-    const lastOwnMessage = [...messages]
-        .reverse()
-        .find((msg) => msg.senderId?.toString() === userId?.toString());
+    const lastOwnMessageId = useMemo(() => {
+        for (let i = messages.length - 1; i >= 0; i--) {
+            if (messages[i].senderId?.toString() === userId?.toString()) {
+                return messages[i]._id;
+            }
+        }
+        return undefined;
+    }, [messages, userId]);
 
     return (
         <div className="w-full max-w-4xl mx-auto mt-8 h-[75vh] flex flex-col
@@ -298,7 +298,7 @@ const Chat = () => {
                                 <p className="whitespace-pre-wrap">{msg.text}</p>
                             </div>
 
-                            {isOwnMessage && msg._id === lastOwnMessage?._id && (
+                            {isOwnMessage && msg._id === lastOwnMessageId && (
                                 <span
                                     className={`mt-1 px-1 text-xs ${msg.seen ? "text-blue-400" : "text-gray-400"
                                         }`}

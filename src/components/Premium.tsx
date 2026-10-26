@@ -1,31 +1,26 @@
-import axios from "axios";
-import { BASE_URL } from "../utils/constants";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
+import api from "../utils/api";
 
 const Premium = () => {
   const [isUserPremium, setIsUserPremium] = useState(false);
-  useEffect(() => {
-    verifyPremiumUser();
+
+  const verifyPremiumUser = useCallback(async () => {
+    try {
+      const res = await api.get("/premium/verify");
+      if (res.data.isPremium) setIsUserPremium(true);
+    } catch (err) {
+      console.error(err);
+    }
   }, []);
 
-  const verifyPremiumUser = async () => {
-    const res = await axios.get(BASE_URL + "/premium/verify", {
-      withCredentials: true,
-    });
-
-    if (res.data.isPremium) {
-      setIsUserPremium(true);
-    }
-  };
+  useEffect(() => {
+    verifyPremiumUser();
+  }, [verifyPremiumUser]);
 
   const handleBuyClick = async (type: string) => {
-    const order = await axios.post(
-      BASE_URL + "/payment/create",
-      {
-        membershipType: type,
-      },
-      { withCredentials: true }
-    );
+    const order = await api.post("/payment/create", {
+      membershipType: type,
+    });
 
     const { amount, keyId, currency, notes, orderId } = order.data;
 

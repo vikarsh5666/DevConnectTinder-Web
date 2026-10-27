@@ -1,2 +1,4 @@
 export const BASE_URL =
-  window.location.hostname === "localhost" ? "http://localhost:3000" : "/api";
+  window.location.hostname === "localhost"
+    ? "http://localhost:3000"
+    : "https://devconnecttinder.duckdns.org/api";

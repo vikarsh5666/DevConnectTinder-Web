@@ -374,7 +374,7 @@ const EditProfile = ({ user }: EditProfileProps) => {
                 Profile Preview
               </h2>
               <p className="mt-1 text-sm text-base-content/60">
-                This is how others see your profile.
+                This is how others see your profile
               </p>
             </div>
 

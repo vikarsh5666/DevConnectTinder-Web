@@ -1,8 +1,16 @@
-import { useState } from "react";
+import { lazy, Suspense, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api, { getErrorMessage } from "../utils/api";
 import { addUser } from "../utils/userSlice";
 import { useAppDispatch } from "../utils/hooks";
+import type { User } from "../utils/types";
+
+const GoogleSignIn = lazy(() => import("./GoogleSignIn"));
+
+type AuthResult = {
+  user: User;
+  redirectTo: string;
+};
 
 const Login = () => {
   const [emailId, setEmailId] = useState("");
@@ -16,14 +24,14 @@ const Login = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
-  const handleLogin = async () => {
+  const authenticate = async (run: () => Promise<AuthResult>) => {
     if (isSubmitting) return;
     setIsSubmitting(true);
     setError("");
     try {
-      const res = await api.post("/login", { emailId, password });
-      dispatch(addUser(res.data));
-      navigate("/");
+      const { user, redirectTo } = await run();
+      dispatch(addUser(user));
+      navigate(redirectTo);
     } catch (err: unknown) {
       setError(getErrorMessage(err));
     } finally {
@@ -31,25 +39,31 @@ const Login = () => {
     }
   };
 
-  const handleSignUp = async () => {
-    if (isSubmitting) return;
-    setIsSubmitting(true);
-    setError("");
-    try {
+  const handleLogin = () =>
+    authenticate(async () => {
+      const res = await api.post("/login", { emailId, password });
+      return { user: res.data, redirectTo: "/" };
+    });
+
+  const handleSignUp = () =>
+    authenticate(async () => {
       const res = await api.post("/signup", {
         firstName,
         lastName,
         emailId,
         password,
       });
-      dispatch(addUser(res.data.data));
-      navigate("/profile");
-    } catch (err: unknown) {
-      setError(getErrorMessage(err));
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
+      return { user: res.data.data, redirectTo: "/profile" };
+    });
+
+  const handleGoogleSuccess = (credential: string) =>
+    authenticate(async () => {
+      const res = await api.post("/google", { credential });
+      return {
+        user: res.data.data,
+        redirectTo: res.data.isNewUser ? "/profile" : "/",
+      };
+    });
 
   return (
     <div className="flex min-h-[85vh] items-center justify-center px-4 py-10">
@@ -203,6 +217,16 @@ const Login = () => {
           </button>
 
           <div className="divider my-0 text-xs text-base-content/40">OR</div>
+
+          <Suspense fallback={<div className="h-10" />}>
+            <GoogleSignIn
+              disabled={isSubmitting}
+              onSuccess={handleGoogleSuccess}
+              onError={() =>
+                setError("Google login failed. Please try again.")
+              }
+            />
+          </Suspense>
 
           <p className="text-center text-sm text-base-content/70">
             {isLoginForm ? "New to Dev Connect?" : "Already have an account?"}

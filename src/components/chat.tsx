@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useParams, useLocation, useNavigate } from "react-router-dom";
 import { createSocketConnection } from "../utils/socket";
-import api from "../utils/api";
+import api, { isRequestCanceled } from "../utils/api";
 import { useAppSelector } from "../utils/hooks";
 
 interface Message {
@@ -47,11 +47,13 @@ const Chat = () => {
     useEffect(() => {
         if (!targetUserId) return;
 
-        let cancelled = false;
+        const controller = new AbortController();
 
         const fetchChatMessages = async () => {
             try {
-                const response = await api.get(`/chat/${targetUserId}`);
+                const response = await api.get(`/chat/${targetUserId}`, {
+                    signal: controller.signal,
+                });
 
                 const chatMessages: Message[] = (
                     response.data.messages || []
@@ -68,7 +70,7 @@ const Chat = () => {
                     (msg) => msg.senderId !== userId
                 );
 
-                if (!cancelled) {
+                if (!controller.signal.aborted) {
                     if (sender) {
                         setSenderName(
                             `${sender.firstName ?? ""} ${sender.lastName ?? ""}`.trim()
@@ -99,6 +101,7 @@ const Chat = () => {
                     });
                 }
             } catch (error) {
+                if (isRequestCanceled(error)) return;
                 console.error("Failed to fetch messages:", error);
             }
         };
@@ -106,7 +109,7 @@ const Chat = () => {
         fetchChatMessages();
 
         return () => {
-            cancelled = true;
+            controller.abort();
         };
     }, [targetUserId, userId]);
 

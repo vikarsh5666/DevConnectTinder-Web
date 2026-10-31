@@ -6,6 +6,12 @@ const api = axios.create({
   withCredentials: true,
 });
 
+export const isRequestCanceled = (err: unknown) =>
+  axios.isAxiosError(err) && err.code === "ERR_CANCELED";
+
+export const isUnauthorized = (err: unknown) =>
+  axios.isAxiosError(err) && err.response?.status === 401;
+
 export const getErrorMessage = (
   err: unknown,
   fallback = "Something went wrong"

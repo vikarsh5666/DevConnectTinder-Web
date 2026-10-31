@@ -20,7 +20,11 @@ const Premium = () => {
   const handleBuyClick = async (type: string) => {
     const order = await api.post("/payment/create", {
       membershipType: type,
+    }).catch((err) => {
+      console.error(err);
+      return null;
     });
+    if (!order) return;
 
     const { amount, keyId, currency, notes, orderId } = order.data;
 

@@ -1,10 +1,9 @@
 import { Suspense, useEffect } from "react";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
-import axios from "axios";
 import NavBar from "./NavBar";
 import Footer from "./Footer";
 import PageLoader from "./PageLoader";
-import api from "../utils/api";
+import api, { isRequestCanceled, isUnauthorized } from "../utils/api";
 import { addUser } from "../utils/userSlice";
 import { useAppDispatch, useAppSelector } from "../utils/hooks";
 
@@ -24,16 +23,16 @@ const Body = () => {
         const res = await api.get("/profile/view", { signal: controller.signal });
         dispatch(addUser(res.data));
       } catch (err: unknown) {
-        if (axios.isAxiosError(err) && err.code === "ERR_CANCELED") return;
-        console.error(err);
-        if (axios.isAxiosError(err) && err.response?.status === 401) {
+        if (isRequestCanceled(err)) return;
+        if (isUnauthorized(err)) {
           navigate("/login");
+          return;
         }
+        console.error(err);
       }
     };
 
     fetchUser();
-
     return () => controller.abort();
   }, [userData, location.pathname, dispatch, navigate]);
 

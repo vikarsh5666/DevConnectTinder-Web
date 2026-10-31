@@ -48,7 +48,7 @@ const NavBar = () => {
               onClick={() => setIsDropdownOpen((prev) => !prev)}
             >
               <div className="w-10 rounded-full">
-                <img alt="user photo" src={user.photoUrl} />
+                <img alt="user photo" src={user.photoUrl}/>
               </div>
             </div>
             {isDropdownOpen && (

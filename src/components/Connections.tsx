@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import UserCard from "./UserCard";
 import PageLoader from "./PageLoader";
-import api from "../utils/api";
+import api, { isRequestCanceled } from "../utils/api";
 import { addConnections } from "../utils/connectionSlice";
 import { useAppDispatch, useAppSelector } from "../utils/hooks";
 import type { User } from "../utils/types";
@@ -16,23 +16,24 @@ const Connections = () => {
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    let cancelled = false;
+    const controller = new AbortController();
 
     const fetchConnections = async () => {
       try {
-        const res = await api.get("/user/connections");
-        if (!cancelled) dispatch(addConnections(res.data));
+        const res = await api.get("/user/connections", {
+          signal: controller.signal,
+        });
+        dispatch(addConnections(res.data));
       } catch (err) {
+        if (isRequestCanceled(err)) return;
         console.error(err);
       } finally {
-        if (!cancelled) setIsLoading(false);
+        if (!controller.signal.aborted) setIsLoading(false);
       }
     };
 
     fetchConnections();
-    return () => {
-      cancelled = true;
-    };
+    return () => controller.abort();
   }, [dispatch]);
 
   const handleChatClick = (connection: User) => {

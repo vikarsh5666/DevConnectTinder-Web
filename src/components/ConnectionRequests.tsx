@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import PageLoader from "./PageLoader";
-import api from "../utils/api";
+import api, { isRequestCanceled } from "../utils/api";
 import { addRequests, removeRequest } from "../utils/connectionRequestsSlice";
 import { useAppDispatch, useAppSelector } from "../utils/hooks";
 
@@ -19,23 +19,24 @@ const ConnectionRequests = () => {
   };
 
   useEffect(() => {
-    let cancelled = false;
+    const controller = new AbortController();
 
     const fetchRequests = async () => {
       try {
-        const res = await api.get("/user/requests/received");
-        if (!cancelled) dispatch(addRequests(res.data.data));
+        const res = await api.get("/user/requests/received", {
+          signal: controller.signal,
+        });
+        dispatch(addRequests(res.data.data));
       } catch (err) {
+        if (isRequestCanceled(err)) return;
         console.error(err);
       } finally {
-        if (!cancelled) setIsLoading(false);
+        if (!controller.signal.aborted) setIsLoading(false);
       }
     };
 
     fetchRequests();
-    return () => {
-      cancelled = true;
-    };
+    return () => controller.abort();
   }, [dispatch]);
 
   if (isLoading) return <PageLoader label="Loading requests..." />;

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import UserCard from "./UserCard";
 import PageLoader from "./PageLoader";
-import api from "../utils/api";
+import api, { isRequestCanceled } from "../utils/api";
 import { addFeed } from "../utils/feedSlice";
 import { useAppDispatch, useAppSelector } from "../utils/hooks";
 
@@ -16,23 +16,22 @@ const Feed = () => {
       return;
     }
 
-    let cancelled = false;
+    const controller = new AbortController();
 
     const getFeed = async () => {
       try {
-        const res = await api.get("/feed");
-        if (!cancelled) dispatch(addFeed(res.data));
+        const res = await api.get("/feed", { signal: controller.signal });
+        dispatch(addFeed(res.data));
       } catch (err) {
+        if (isRequestCanceled(err)) return;
         console.error(err);
       } finally {
-        if (!cancelled) setIsLoading(false);
+        if (!controller.signal.aborted) setIsLoading(false);
       }
     };
 
     getFeed();
-    return () => {
-      cancelled = true;
-    };
+    return () => controller.abort();
   }, [dispatch, feed.length]);
 
   if (isLoading) return <PageLoader label="Finding developers..." />;
